@@ -3,21 +3,66 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Hazikk01 – Official Page</title>
+    <title>Hazikk01 – Official App</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Firebase CDN -->
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-analytics.js"></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCPldatrAsaCZksDPLiDzpTec-2plf5Zrw",
+            authDomain: "hazik-01.firebaseapp.com",
+            databaseURL: "https://hazik-01-default-rtdb.firebaseio.com",
+            projectId: "hazik-01",
+            storageBucket: "hazik-01.firebasestorage.app",
+            messagingSenderId: "804965117735",
+            appId: "1:804965117735:web:9f8b8ca8ff410a10fb0302",
+            measurementId: "G-915DG4PWMZ"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+        const auth = getAuth(app);
+        const storage = getStorage(app);
+        const provider = new GoogleAuthProvider();
+        
+        window.firebase = {
+            db: database,
+            auth: auth,
+            storage: storage,
+            provider: provider,
+            ref: ref,
+            push: push,
+            onValue: onValue,
+            signInWithPopup: signInWithPopup,
+            onAuthStateChanged: onAuthStateChanged,
+            signOut: signOut,
+            storageRef: storageRef,
+            uploadBytes: uploadBytes,
+            getDownloadURL: getDownloadURL
+        };
+    </script>
     <style>
         :root {
             --primary: #ff3a3a;
             --primary-dark: #b30000;
+            --primary-light: #ff6b6b;
             --black: #121212;
             --gray: #e0e0e0;
             --light-gray: #f5f5f5;
             --white: #ffffff;
+            --surface: #1e1e1e;
+            --surface-light: #2a2a2a;
+            --text-primary: rgba(255, 255, 255, 0.87);
+            --text-secondary: rgba(255, 255, 255, 0.6);
+            --elevation-1: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+            --elevation-2: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+            --elevation-3: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+            --elevation-4: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+            --elevation-5: 0 19px 38px rgba(0, 0, 0, 0.30), 0 15px 12px rgba(0, 0, 0, 0.22);
         }
 
         * {
@@ -31,21 +76,306 @@
         html, body {
             height: 100%;
             overflow-x: hidden;
+            background-color: var(--black);
+            color: var(--text-primary);
         }
 
         body {
-            background: radial-gradient(circle at center, var(--primary-dark), var(--black));
-            color: var(--white);
             min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .container {
+            flex: 1;
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* App Bar */
+        .app-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            background-color: var(--surface);
+            box-shadow: var(--elevation-2);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+            background-color: rgba(30, 30, 30, 0.8);
+        }
+
+        .app-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .app-title img {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .app-actions {
+            display: flex;
+            gap: 16px;
+        }
+
+        .icon-button {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            border: none;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .icon-button:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .icon-button .badge {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 16px;
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
         }
 
-        /* [Previous CSS styles remain the same] */
-        /* ... Include all your existing CSS styles here ... */
+        /* Search Bar */
+        .search-container {
+            margin: 16px 0;
+            position: relative;
+        }
 
-        /* Login Modal Styles */
-        .login-overlay {
+        .search-bar {
+            width: 100%;
+            padding: 12px 16px;
+            padding-left: 48px;
+            border-radius: 24px;
+            border: none;
+            background: var(--surface-light);
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            box-shadow: var(--elevation-1);
+        }
+
+        .search-bar:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px var(--primary), var(--elevation-2);
+            background: var(--surface-light);
+        }
+
+        .search-bar::placeholder {
+            color: var(--text-secondary);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+        }
+
+        /* Section Titles */
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin: 24px 0 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-title::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.1);
+            margin-left: 8px;
+        }
+
+        /* Featured Blogs */
+        .featured-blogs {
+            margin-bottom: 24px;
+        }
+
+        .featured-blogs-container {
+            display: flex;
+            gap: 16px;
+            overflow-x: auto;
+            padding-bottom: 8px;
+            scroll-snap-type: x mandatory;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .featured-blogs-container::-webkit-scrollbar {
+            height: 4px;
+        }
+
+        .featured-blogs-container::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .featured-blogs-container::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 2px;
+        }
+
+        .featured-card {
+            min-width: 85%;
+            scroll-snap-align: start;
+            background: var(--surface-light);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: var(--elevation-1);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .featured-card-badge {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            background: var(--primary);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            z-index: 1;
+        }
+
+        .featured-card-image {
+            width: 100%;
+            height: 160px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .featured-card-content {
+            padding: 16px;
+        }
+
+        .featured-card-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .featured-card-desc {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            margin-bottom: 12px;
+        }
+
+        .featured-card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        /* All Blogs */
+        .all-blogs {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 16px;
+            margin-bottom: 80px;
+        }
+
+        .blog-card {
+            background: var(--surface-light);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: var(--elevation-1);
+            transition: all 0.3s ease;
+        }
+
+        .blog-card-image {
+            width: 100%;
+            height: 140px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .blog-card-content {
+            padding: 16px;
+        }
+
+        .blog-card-title {
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .blog-card-desc {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            margin-bottom: 12px;
+        }
+
+        .blog-card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+        }
+
+        /* Blog Modal */
+        .modal-overlay {
             position: fixed;
             top: 0;
             left: 0;
@@ -54,193 +384,1483 @@
             background: rgba(0, 0, 0, 0.9);
             display: flex;
             justify-content: center;
-            align-items: center;
-            z-index: 2000;
+            align-items: flex-start;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
             backdrop-filter: blur(10px);
+            padding: 16px;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
         }
 
-        .login-modal {
-            background: rgba(30, 30, 30, 0.95);
-            border-radius: 1.5rem;
-            padding: 2rem;
-            text-align: center;
-            max-width: 400px;
-            width: 90%;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            border: 1px solid rgba(255, 58, 58, 0.2);
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
         }
 
-        .login-title {
-            font-size: 1.5rem;
-            margin-bottom: 1rem;
-            color: var(--white);
+        .blog-modal {
+            background: var(--surface);
+            border-radius: 16px;
+            width: 100%;
+            max-width: 500px;
+            margin: 32px 0;
+            overflow-y: auto;
+            padding: 0;
+            position: relative;
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+            box-shadow: var(--elevation-4);
+            border: 1px solid rgba(255, 58, 58, 0.1);
         }
 
-        .login-text {
-            margin-bottom: 2rem;
-            color: var(--gray);
+        .modal-overlay.active .blog-modal {
+            transform: translateY(0);
         }
 
-        .google-signin-btn {
-            background: #4285F4;
-            color: white;
-            border: none;
-            padding: 0.8rem 1.5rem;
-            border-radius: 2rem;
+        .modal-close {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(30, 30, 30, 0.8);
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 0.8rem;
-            font-weight: 500;
+            border: none;
+            color: var(--white);
             cursor: pointer;
-            margin: 0 auto;
+            z-index: 10;
             transition: all 0.3s ease;
         }
 
-        .google-signin-btn:hover {
-            background: #3367D6;
-            transform: translateY(-2px);
+        .modal-close:hover {
+            background: var(--primary);
+            transform: rotate(90deg);
         }
 
-        .google-icon {
-            width: 20px;
-            height: 20px;
+        .modal-image-container {
+            position: relative;
+            width: 100%;
+            height: 200px;
+            overflow: hidden;
         }
 
-        /* User Profile Styles */
-        .user-profile {
+        .modal-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .modal-content-container {
+            padding: 20px;
+        }
+
+        .modal-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .modal-content {
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+            white-space: pre-line;
+        }
+
+        .modal-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .modal-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .modal-button {
+            padding: 12px 16px;
+            border-radius: 8px;
+            background: var(--primary);
+            color: var(--white);
+            border: none;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
             display: flex;
             align-items: center;
-            gap: 0.8rem;
+            justify-content: center;
+            gap: 8px;
+            text-align: center;
+            font-size: 0.95rem;
+        }
+
+        .modal-button:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--elevation-1);
+        }
+
+        .modal-button.secondary {
+            background: var(--surface-light);
+            color: var(--text-primary);
+        }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--surface);
+            display: flex;
+            justify-content: space-around;
+            padding: 8px 0;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
+            z-index: 90;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 8px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.7rem;
+            transition: all 0.2s ease;
+            flex: 1;
+        }
+
+        .nav-item.active {
+            color: var(--primary);
+        }
+
+        .nav-icon {
+            font-size: 1.4rem;
+            margin-bottom: 4px;
+        }
+
+        /* Settings Menu */
+        .settings-menu {
+            position: fixed;
+            top: 0;
+            right: -300px;
+            width: 280px;
+            height: 100vh;
+            background: var(--surface);
+            box-shadow: var(--elevation-4);
+            z-index: 1000;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            padding-top: 60px;
+        }
+
+        .settings-menu.active {
+            right: 0;
+        }
+
+        .menu-header {
+            padding: 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
 
         .user-avatar {
-            width: 36px;
-            height: 36px;
+            width: 48px;
+            height: 48px;
             border-radius: 50%;
             object-fit: cover;
         }
 
+        .user-info {
+            flex: 1;
+        }
+
         .user-name {
-            font-size: 0.9rem;
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .user-email {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .menu-items {
+            flex: 1;
+            overflow-y: auto;
+            padding: 8px 0;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            color: var(--text-primary);
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .menu-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .menu-item .material-icons {
+            margin-right: 16px;
+            color: var(--text-secondary);
+        }
+
+        .menu-item.active {
+            color: var(--primary);
+        }
+
+        .menu-item.active .material-icons {
+            color: var(--primary);
+        }
+
+        .menu-footer {
+            padding: 16px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .logout-button {
+            width: 100%;
+            padding: 12px;
+            background: rgba(255, 58, 58, 0.1);
+            color: var(--primary);
+            border: none;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
             font-weight: 500;
-            max-width: 120px;
+            cursor: pointer;
+        }
+
+        /* Admin Panel */
+        .admin-panel {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            padding: 16px;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .admin-panel.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .admin-container {
+            background: var(--surface);
+            border-radius: 16px;
+            width: 100%;
+            max-width: 500px;
+            padding: 0;
+            box-shadow: var(--elevation-4);
+            border: 1px solid rgba(255, 58, 58, 0.1);
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+            margin: 32px 0;
+        }
+
+        .admin-panel.active .admin-container {
+            transform: translateY(0);
+        }
+
+        .admin-header {
+            padding: 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .admin-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .admin-close {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            border: none;
+            color: var(--text-primary);
+            cursor: pointer;
+        }
+
+        .admin-close:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .admin-content {
+            padding: 16px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: var(--surface-light);
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(255, 58, 58, 0.2);
+        }
+
+        .form-textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .file-upload {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            border: 2px dashed rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .file-upload:hover {
+            border-color: var(--primary);
+            background: rgba(255, 58, 58, 0.05);
+        }
+
+        .file-upload input {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .file-upload-icon {
+            font-size: 2rem;
+            margin-bottom: 8px;
+            color: var(--text-secondary);
+        }
+
+        .file-upload-text {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .file-upload-preview {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-top: 8px;
+            display: none;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        .button {
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            flex: 1;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .button-primary {
+            background: var(--primary);
+            color: var(--white);
+        }
+
+        .button-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--elevation-1);
+        }
+
+        .button-secondary {
+            background: var(--surface-light);
+            color: var(--text-primary);
+        }
+
+        .button-secondary:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .button-spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--white);
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        /* Button Group in Admin */
+        .button-group-admin {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+            align-items: center;
+        }
+
+        .remove-button {
+            background: rgba(255, 58, 58, 0.1);
+            color: var(--primary);
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .remove-button:hover {
+            background: rgba(255, 58, 58, 0.2);
+        }
+
+        .add-button {
+            background: var(--surface-light);
+            color: var(--text-primary);
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            width: 100%;
+            margin-bottom: 16px;
+        }
+
+        .add-button:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 80px;
+            left: 16px;
+            right: 16px;
+            background: var(--surface-light);
+            color: var(--text-primary);
+            padding: 12px 16px;
+            border-radius: 8px;
+            box-shadow: var(--elevation-3);
+            z-index: 1001;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            max-width: 400px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .toast.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .toast.error {
+            background: rgba(211, 47, 47, 0.9);
+            color: white;
+        }
+
+        .toast.success {
+            background: rgba(56, 142, 60, 0.9);
+            color: white;
+        }
+
+        .toast-icon {
+            font-size: 1.2rem;
+        }
+
+        /* Loading Spinner */
+        .spinner {
+            display: inline-block;
+            width: 18px;
+            height: 18px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--white);
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from { 
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Ripple Effect */
+        .ripple {
+            position: relative;
             overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
+        }
+
+        .ripple-effect {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.4);
+            transform: scale(0);
+            animation: ripple 0.6s linear;
+            pointer-events: none;
+        }
+
+        @keyframes ripple {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+
+        /* No Blogs Message */
+        .no-blogs {
+            text-align: center;
+            color: var(--text-secondary);
+            padding: 32px;
+            grid-column: 1 / -1;
+        }
+
+        /* Login Screen */
+        .login-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--black);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 32px;
+            z-index: 10000;
+        }
+
+        .login-logo {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 24px;
+            box-shadow: var(--elevation-3);
+        }
+
+        .login-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            text-align: center;
+        }
+
+        .login-subtitle {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            margin-bottom: 32px;
+            text-align: center;
+            max-width: 300px;
+        }
+
+        .login-button {
+            padding: 14px 24px;
+            border-radius: 8px;
+            background: var(--primary);
+            color: var(--white);
+            border: none;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: var(--elevation-1);
+            width: 100%;
+            max-width: 250px;
+        }
+
+        .login-button:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--elevation-2);
+        }
+
+        .login-button .material-icons {
+            font-size: 1.2rem;
+        }
+
+        /* Overlay */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Hide scrollbar but allow scrolling */
+        .scrollable {
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+        }
+        
+        .scrollable::-webkit-scrollbar {
+            display: none;
         }
     </style>
 </head>
 <body>
-    <!-- [Previous HTML structure remains the same] -->
-    <!-- ... Include all your existing HTML here ... -->
+    <!-- Login Screen (shown initially) -->
+    <div class="login-screen" id="login-screen">
+        <img src="https://i.postimg.cc/4dz51Kf7/451416876-1243992447013570-1116671324764678528-n.jpg" alt="Hazikk01 Logo" class="login-logo">
+        <h1 class="login-title">Hazikk01 Blog</h1>
+        <p class="login-subtitle">Sign in with Google to access all features</p>
+        <button class="login-button ripple" id="login-button">
+            <span class="material-icons">login</span>
+            Sign in with Google
+        </button>
+    </div>
 
-    <!-- Add this new login modal -->
-    <div class="login-overlay" id="login-overlay">
-        <div class="login-modal">
-            <h2 class="login-title">Welcome to Hazikk01</h2>
-            <p class="login-text">Please sign in with Google to continue</p>
-            <button id="google-signin-btn" class="google-signin-btn ripple">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" class="google-icon">
-                Sign in with Google
+    <!-- Main App (hidden initially) -->
+    <div class="container" id="app-container" style="display: none;">
+        <!-- App Bar -->
+        <header class="app-bar">
+            <h1 class="app-title">
+                <img src="https://i.postimg.cc/4dz51Kf7/451416876-1243992447013570-1116671324764678528-n.jpg" alt="Logo">
+                Hazikk01 Blog
+            </h1>
+            <div class="app-actions">
+                <button class="icon-button ripple" id="search-button">
+                    <span class="material-icons">search</span>
+                </button>
+                <button class="icon-button ripple" id="settings-button">
+                    <span class="material-icons">settings</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Search Bar (hidden initially) -->
+            <div class="search-container" id="search-container" style="display: none;">
+                <span class="material-icons search-icon">search</span>
+                <input type="text" class="search-bar" placeholder="Search blogs..." id="search-bar">
+            </div>
+
+            <!-- Featured Blogs Section -->
+            <h2 class="section-title">
+                <span class="material-icons">star</span>
+                Featured
+            </h2>
+            <div class="featured-blogs">
+                <div class="featured-blogs-container" id="featured-blogs-container">
+                    <!-- Featured blogs will be loaded here -->
+                    <div class="no-blogs">Loading featured blogs...</div>
+                </div>
+            </div>
+
+            <!-- All Blogs Section -->
+            <h2 class="section-title">
+                <span class="material-icons">article</span>
+                All Blogs
+            </h2>
+            <div class="all-blogs" id="all-blogs-container">
+                <!-- All blogs will be loaded here -->
+                <div class="no-blogs">Loading blogs...</div>
+            </div>
+        </main>
+
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav">
+            <a href="#" class="nav-item active">
+                <span class="material-icons nav-icon">home</span>
+                <span>Home</span>
+            </a>
+            <a href="#" class="nav-item">
+                <span class="material-icons nav-icon">explore</span>
+                <span>Explore</span>
+            </a>
+            <a href="#" class="nav-item">
+                <span class="material-icons nav-icon">bookmark</span>
+                <span>Saved</span>
+            </a>
+            <a href="#" class="nav-item">
+                <span class="material-icons nav-icon">person</span>
+                <span>Profile</span>
+            </a>
+        </nav>
+    </div>
+
+    <!-- Settings Menu -->
+    <div class="settings-menu" id="settings-menu">
+        <div class="menu-header">
+            <img src="" alt="User Avatar" class="user-avatar" id="user-avatar">
+            <div class="user-info">
+                <div class="user-name" id="user-name">Guest User</div>
+                <div class="user-email" id="user-email">guest@example.com</div>
+            </div>
+        </div>
+        <div class="menu-items">
+            <a href="#" class="menu-item">
+                <span class="material-icons">account_circle</span>
+                <span>My Account</span>
+            </a>
+            <a href="#" class="menu-item">
+                <span class="material-icons">notifications</span>
+                <span>Notifications</span>
+            </a>
+            <a href="#" class="menu-item">
+                <span class="material-icons">bookmark</span>
+                <span>Saved Posts</span>
+            </a>
+            <a href="#" class="menu-item" id="admin-menu-item">
+                <span class="material-icons">admin_panel_settings</span>
+                <span>Admin Panel</span>
+            </a>
+            <a href="#" class="menu-item">
+                <span class="material-icons">help</span>
+                <span>Help & Support</span>
+            </a>
+            <a href="#" class="menu-item">
+                <span class="material-icons">info</span>
+                <span>About</span>
+            </a>
+        </div>
+        <div class="menu-footer">
+            <button class="logout-button ripple" id="logout-button">
+                <span class="material-icons">logout</span>
+                <span>Log Out</span>
             </button>
         </div>
     </div>
 
+    <!-- Overlay for menus -->
+    <div class="overlay" id="overlay"></div>
+
+    <!-- Blog Modal -->
+    <div class="modal-overlay" id="blog-modal-overlay">
+        <div class="blog-modal scrollable">
+            <button class="modal-close ripple" id="modal-close">&times;</button>
+            <div class="modal-image-container">
+                <img src="" alt="Blog Cover" class="modal-image" id="modal-image">
+            </div>
+            <div class="modal-content-container">
+                <h2 class="modal-title" id="modal-title"></h2>
+                <div class="modal-meta">
+                    <span id="modal-date">Today</span>
+                    <span id="modal-author">Admin</span>
+                </div>
+                <p class="modal-content" id="modal-content"></p>
+                <div class="modal-buttons" id="modal-buttons">
+                    <!-- Buttons will be added here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Panel -->
+    <div class="admin-panel" id="admin-panel">
+        <div class="admin-container scrollable" id="admin-container">
+            <!-- Content will be replaced based on state -->
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast"></div>
+
     <script>
-        // Firebase CDN Configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyCPldatrAsaCZksDPLiDzpTec-2plf5Zrw",
-            authDomain: "hazik-01.firebaseapp.com",
-            databaseURL: "https://hazik-01-default-rtdb.firebaseio.com",
-            projectId: "hazik-01",
-            storageBucket: "hazik-01.firebasestorage.app",
-            messagingSenderId: "804965117735",
-            appId: "1:804965117735:web:9f8b8ca8ff410a10fb0302",
-            measurementId: "G-915DG4PWMZ"
-        };
+        // DOM Elements
+        const loginScreen = document.getElementById('login-screen');
+        const appContainer = document.getElementById('app-container');
+        const loginButton = document.getElementById('login-button');
+        const logoutButton = document.getElementById('logout-button');
+        const settingsButton = document.getElementById('settings-button');
+        const settingsMenu = document.getElementById('settings-menu');
+        const overlay = document.getElementById('overlay');
+        const searchButton = document.getElementById('search-button');
+        const searchContainer = document.getElementById('search-container');
+        const searchBar = document.getElementById('search-bar');
+        const featuredBlogsContainer = document.getElementById('featured-blogs-container');
+        const allBlogsContainer = document.getElementById('all-blogs-container');
+        const blogModalOverlay = document.getElementById('blog-modal-overlay');
+        const modalClose = document.getElementById('modal-close');
+        const modalImage = document.getElementById('modal-image');
+        const modalTitle = document.getElementById('modal-title');
+        const modalContent = document.getElementById('modal-content');
+        const modalButtons = document.getElementById('modal-buttons');
+        const adminMenuItem = document.getElementById('admin-menu-item');
+        const adminPanel = document.getElementById('admin-panel');
+        const adminContainer = document.getElementById('admin-container');
+        const toast = document.getElementById('toast');
+        const userAvatar = document.getElementById('user-avatar');
+        const userName = document.getElementById('user-name');
+        const userEmail = document.getElementById('user-email');
+
+        // State
+        let blogs = [];
+        let currentUser = null;
+        let buttonCount = 1;
+        let selectedImageFile = null;
 
         // Initialize Firebase
-        firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
-        const database = firebase.database();
-        const blogsRef = database.ref('blogs');
-        const analytics = firebase.analytics();
+        const { db, auth, storage, provider, ref, push, onValue, signInWithPopup, 
+                onAuthStateChanged, signOut, storageRef, uploadBytes, getDownloadURL } = window.firebase;
+        const blogsRef = ref(db, 'blogs');
 
-        // DOM Elements
-        const loginOverlay = document.getElementById('login-overlay');
-        const googleSignInBtn = document.getElementById('google-signin-btn');
-        const settingsIcon = document.querySelector('.settings-icon');
-
-        // Check if user is logged in
-        function checkAuthState() {
-            const userData = localStorage.getItem('hazikk01_user');
-            if (userData) {
-                // User is logged in, hide login modal
-                loginOverlay.style.display = 'none';
-                updateUserUI(JSON.parse(userData));
-                return true;
+        // Ripple Effect
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('ripple')) {
+                const ripple = document.createElement('span');
+                ripple.classList.add('ripple-effect');
+                
+                const rect = e.target.getBoundingClientRect();
+                const size = Math.max(rect.width, rect.height);
+                const x = e.clientX - rect.left - size / 2;
+                const y = e.clientY - rect.top - size / 2;
+                
+                ripple.style.width = ripple.style.height = `${size}px`;
+                ripple.style.left = `${x}px`;
+                ripple.style.top = `${y}px`;
+                
+                e.target.appendChild(ripple);
+                
+                setTimeout(() => {
+                    ripple.remove();
+                }, 600);
             }
-            return false;
-        }
-
-        // Update UI with user info
-        function updateUserUI(user) {
-            settingsIcon.innerHTML = `
-                <div class="user-profile">
-                    <img src="${user.photoURL || 'https://i.postimg.cc/4dz51Kf7/451416876-1243992447013570-1116671324764678528-n.jpg'}" 
-                         alt="${user.displayName}" 
-                         class="user-avatar">
-                    <span class="user-name">${user.displayName || 'User'}</span>
-                </div>
-            `;
-        }
-
-        // Google Sign-In
-        function signInWithGoogle() {
-            const provider = new firebase.auth.GoogleAuthProvider();
-            auth.signInWithPopup(provider)
-                .then((result) => {
-                    // Store user data in local storage
-                    const user = {
-                        uid: result.user.uid,
-                        displayName: result.user.displayName,
-                        email: result.user.email,
-                        photoURL: result.user.photoURL
-                    };
-                    localStorage.setItem('hazikk01_user', JSON.stringify(user));
-                    
-                    // Hide login modal
-                    loginOverlay.style.display = 'none';
-                    
-                    // Update UI
-                    updateUserUI(user);
-                    
-                    // Log analytics event
-                    analytics.logEvent('login', { method: 'Google' });
-                })
-                .catch((error) => {
-                    console.error('Google sign-in error:', error);
-                    showToast('Google sign-in failed. Please try again.', 'error');
-                });
-        }
-
-        // Check auth state on page load
-        window.addEventListener('DOMContentLoaded', () => {
-            if (!checkAuthState()) {
-                // Show login modal if not logged in
-                loginOverlay.style.display = 'flex';
-            }
-            
-            // Initialize the rest of your app
-            fetchBlogs();
         });
 
-        // Google Sign-In button event
-        googleSignInBtn.addEventListener('click', signInWithGoogle);
+        // Toggle Settings Menu
+        function toggleSettingsMenu() {
+            settingsMenu.classList.toggle('active');
+            overlay.classList.toggle('active');
+        }
 
-        // [Rest of your existing JavaScript code]
-        // ... Include all your existing JavaScript functions here ...
+        // Toggle Search
+        function toggleSearch() {
+            searchContainer.style.display = searchContainer.style.display === 'none' ? 'block' : 'none';
+            if (searchContainer.style.display === 'block') {
+                setTimeout(() => searchBar.focus(), 100);
+            }
+        }
+
+        // Close All Modals
+        function closeAllModals() {
+            settingsMenu.classList.remove('active');
+            adminPanel.classList.remove('active');
+            blogModalOverlay.classList.remove('active');
+            overlay.classList.remove('active');
+        }
+
+        // Show Toast
+        function showToast(message, type = 'info') {
+            const icon = type === 'error' ? 'error' : 
+                        type === 'success' ? 'check_circle' : 'info';
+            
+            toast.innerHTML = `
+                <span class="material-icons toast-icon">${icon}</span>
+                <span>${message}</span>
+            `;
+            toast.className = `toast ${type}`;
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // Format Date
+        function formatDate(timestamp) {
+            if (!timestamp) return 'Recently';
+            const date = new Date(timestamp);
+            return date.toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'short', 
+                day: 'numeric' 
+            });
+        }
+
+        // Fetch Blogs from Firebase
+        function fetchBlogs() {
+            onValue(blogsRef, (snapshot) => {
+                blogs = [];
+                snapshot.forEach((childSnapshot) => {
+                    blogs.push({
+                        id: childSnapshot.key,
+                        ...childSnapshot.val()
+                    });
+                });
+                
+                // Sort by createdAt (newest first)
+                blogs.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+                renderBlogs();
+            }, (error) => {
+                showToast('Error loading blogs: ' + error.message, 'error');
+            });
+        }
+
+        // Render Blogs
+        function renderBlogs(filter = '') {
+            featuredBlogsContainer.innerHTML = '';
+            allBlogsContainer.innerHTML = '';
+            
+            let filteredBlogs = blogs;
+            if (filter) {
+                const lowerFilter = filter.toLowerCase();
+                filteredBlogs = blogs.filter(blog => 
+                    (blog.title && blog.title.toLowerCase().includes(lowerFilter)) || 
+                    (blog.shortDesc && blog.shortDesc.toLowerCase().includes(lowerFilter)) ||
+                    (blog.fullDesc && blog.fullDesc.toLowerCase().includes(lowerFilter))
+                );
+            }
+            
+            // Show message if no blogs
+            if (filteredBlogs.length === 0) {
+                const noBlogsMsg = document.createElement('div');
+                noBlogsMsg.className = 'no-blogs';
+                noBlogsMsg.textContent = filter ? 'No matching blogs found' : 'No blogs available';
+                featuredBlogsContainer.appendChild(noBlogsMsg.cloneNode(true));
+                allBlogsContainer.appendChild(noBlogsMsg);
+                return;
+            }
+            
+            // Featured Blogs (horizontal scroll - show first 5)
+            const featuredBlogs = filteredBlogs.slice(0, 5);
+            featuredBlogs.forEach((blog, index) => {
+                const blogCard = createBlogCard(blog, true, index === 0);
+                featuredBlogsContainer.appendChild(blogCard);
+            });
+            
+            // All Blogs (vertical list)
+            filteredBlogs.forEach(blog => {
+                const blogCard = createBlogCard(blog, false);
+                allBlogsContainer.appendChild(blogCard);
+            });
+        }
+
+        // Create Blog Card
+        function createBlogCard(blog, isFeatured = false, isFirst = false) {
+            const blogCard = document.createElement('div');
+            blogCard.className = isFeatured ? 'featured-card' : 'blog-card';
+            blogCard.dataset.id = blog.id;
+            
+            if (isFeatured && isFirst) {
+                blogCard.innerHTML = `
+                    ${blog.featured ? '<div class="featured-card-badge">Featured</div>' : ''}
+                    <img src="${blog.imageUrl || 'https://via.placeholder.com/600x400?text=No+Image'}" 
+                         alt="${blog.title || 'Untitled Blog'}" 
+                         class="featured-card-image">
+                    <div class="featured-card-content">
+                        <h3 class="featured-card-title">${blog.title || 'Untitled Blog'}</h3>
+                        <p class="featured-card-desc">${blog.shortDesc || 'No description available'}</p>
+                        <div class="featured-card-footer">
+                            <span>${formatDate(blog.createdAt)}</span>
+                            <span>5 min read</span>
+                        </div>
+                    </div>
+                `;
+            } else if (isFeatured) {
+                blogCard.innerHTML = `
+                    <img src="${blog.imageUrl || 'https://via.placeholder.com/600x400?text=No+Image'}" 
+                         alt="${blog.title || 'Untitled Blog'}" 
+                         class="featured-card-image">
+                    <div class="featured-card-content">
+                        <h3 class="featured-card-title">${blog.title || 'Untitled Blog'}</h3>
+                        <p class="featured-card-desc">${blog.shortDesc || 'No description available'}</p>
+                        <div class="featured-card-footer">
+                            <span>${formatDate(blog.createdAt)}</span>
+                            <span>5 min read</span>
+                        </div>
+                    </div>
+                `;
+            } else {
+                blogCard.innerHTML = `
+                    <img src="${blog.imageUrl || 'https://via.placeholder.com/600x400?text=No+Image'}" 
+                         alt="${blog.title || 'Untitled Blog'}" 
+                         class="blog-card-image">
+                    <div class="blog-card-content">
+                        <h3 class="blog-card-title">${blog.title || 'Untitled Blog'}</h3>
+                        <p class="blog-card-desc">${blog.shortDesc || 'No description available'}</p>
+                        <div class="blog-card-footer">
+                            <span>${formatDate(blog.createdAt)}</span>
+                            <span>5 min read</span>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            blogCard.addEventListener('click', () => openBlogModal(blog));
+            
+            return blogCard;
+        }
+
+        // Open Blog Modal
+        function openBlogModal(blog) {
+            modalImage.src = blog.imageUrl || 'https://via.placeholder.com/800x400?text=No+Image';
+            modalImage.alt = blog.title || 'Untitled Blog';
+            modalTitle.textContent = blog.title || 'Untitled Blog';
+            modalContent.textContent = blog.fullDesc || 'No content available';
+            document.getElementById('modal-date').textContent = formatDate(blog.createdAt);
+            document.getElementById('modal-author').textContent = blog.author || 'Admin';
+            
+            // Clear previous buttons
+            modalButtons.innerHTML = '';
+            
+            // Add buttons if they exist
+            if (blog.buttons && blog.buttons.length > 0) {
+                blog.buttons.forEach(button => {
+                    if (button.label && button.link) {
+                        const btn = document.createElement('a');
+                        btn.href = button.link;
+                        btn.target = '_blank';
+                        btn.rel = 'noopener noreferrer';
+                        btn.className = 'modal-button ripple';
+                        btn.textContent = button.label;
+                        modalButtons.appendChild(btn);
+                    }
+                });
+            } else {
+                // Add a default close button if no buttons exist
+                const closeBtn = document.createElement('button');
+                closeBtn.className = 'modal-button secondary ripple';
+                closeBtn.textContent = 'Close';
+                closeBtn.addEventListener('click', closeBlogModal);
+                modalButtons.appendChild(closeBtn);
+            }
+            
+            blogModalOverlay.classList.add('active');
+            overlay.classList.add('active');
+        }
+
+        // Close Blog Modal
+        function closeBlogModal() {
+            blogModalOverlay.classList.remove('active');
+            overlay.classList.remove('active');
+        }
+
+        // Show Admin Panel
+        function showAdminPanel() {
+            adminContainer.innerHTML = `
+                <div class="admin-header">
+                    <h2 class="admin-title">Admin Panel</h2>
+                    <button class="admin-close ripple" id="admin-close">&times;</button>
+                </div>
+                <div class="admin-content">
+                    <h3 style="margin-bottom: 16px; font-weight: 500;">Create New Blog Post</h3>
+                    <form id="blog-form">
+                        <div class="form-group">
+                            <label for="blog-image" class="form-label">Cover Image</label>
+                            <div class="file-upload ripple" id="file-upload">
+                                <input type="file" id="blog-image-file" accept="image/*">
+                                <span class="material-icons file-upload-icon">image</span>
+                                <span class="file-upload-text">Click to upload cover image</span>
+                                <img id="image-preview" class="file-upload-preview">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="blog-title" class="form-label">Blog Title</label>
+                            <input type="text" id="blog-title" class="form-input" placeholder="Enter blog title" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="blog-short-desc" class="form-label">Short Description</label>
+                            <input type="text" id="blog-short-desc" class="form-input" 
+                                   placeholder="Enter short description (max 100 chars)" maxlength="100" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="blog-full-desc" class="form-label">Full Content</label>
+                            <textarea id="blog-full-desc" class="form-input form-textarea" 
+                                      placeholder="Enter full blog content" required></textarea>
+                        </div>
+                        
+                        <h3 style="margin: 24px 0 12px; color: var(--text-secondary); font-size: 0.9rem;">Action Buttons (Optional)</h3>
+                        
+                        <div id="buttons-container">
+                            <!-- Buttons will be added here -->
+                        </div>
+                        
+                        <button type="button" class="add-button ripple" id="add-button">
+                            <span class="material-icons">add</span>
+                            Add Another Button
+                        </button>
+                        
+                        <div class="button-group">
+                            <button type="button" class="button button-secondary ripple" id="cancel-blog">
+                                Cancel
+                            </button>
+                            <button type="submit" class="button button-primary ripple" id="submit-blog">
+                                <span id="submit-text">Publish Blog</span>
+                                <span id="submit-spinner" class="button-spinner" style="display: none;"></span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            
+            // Add default button
+            addButtonField();
+            
+            // Set up event listeners
+            document.getElementById('admin-close').addEventListener('click', hideAdminPanel);
+            document.getElementById('cancel-blog').addEventListener('click', hideAdminPanel);
+            document.getElementById('add-button').addEventListener('click', addButtonField);
+            document.getElementById('blog-form').addEventListener('submit', submitBlog);
+            
+            // File upload handler
+            const fileUpload = document.getElementById('file-upload');
+            const imageInput = document.getElementById('blog-image-file');
+            const imagePreview = document.getElementById('image-preview');
+            
+            fileUpload.addEventListener('click', () => imageInput.click());
+            
+            imageInput.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    selectedImageFile = file;
+                    
+                    // Show preview
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        imagePreview.src = event.target.result;
+                        imagePreview.style.display = 'block';
+                        fileUpload.querySelector('.file-upload-icon').style.display = 'none';
+                        fileUpload.querySelector('.file-upload-text').textContent = file.name;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+            
+            adminPanel.classList.add('active');
+            overlay.classList.add('active');
+        }
+
+        // Hide Admin Panel
+        function hideAdminPanel() {
+            adminPanel.classList.remove('active');
+            overlay.classList.remove('active');
+            buttonCount = 1;
+            selectedImageFile = null;
+        }
+
+        // Add Button Field
+        function addButtonField() {
+            if (buttonCount >= 5) {
+                showToast('Maximum 5 buttons allowed', 'error');
+                return;
+            }
+            
+            const buttonsContainer = document.getElementById('buttons-container');
+            const buttonId = buttonCount++;
+            
+            const buttonDiv = document.createElement('div');
+            buttonDiv.className = 'button-group-admin';
+            buttonDiv.innerHTML = `
+                <div style="flex: 1;">
+                    <div class="form-group">
+                        <label for="button${buttonId}-label" class="form-label">Button ${buttonId} Label</label>
+                        <input type="text" id="button${buttonId}-label" class="form-input" placeholder="e.g. Watch Video">
+                    </div>
+                    <div class="form-group">
+                        <label for="button${buttonId}-link" class="form-label">Button ${buttonId} Link</label>
+                        <input type="url" id="button${buttonId}-link" class="form-input" placeholder="https://example.com">
+                    </div>
+                </div>
+                ${buttonId > 1 ? `<button type="button" class="remove-button ripple" data-id="${buttonId}">×</button>` : ''}
+            `;
+            
+            buttonsContainer.appendChild(buttonDiv);
+            
+            // Add event listener for remove button if it exists
+            if (buttonId > 1) {
+                buttonDiv.querySelector('.remove-button').addEventListener('click', function() {
+                    buttonsContainer.removeChild(buttonDiv);
+                    buttonCount--;
+                });
+            }
+        }
+
+        // Submit Blog to Firebase
+        async function submitBlog(e) {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('submit-blog');
+            const submitText = document.getElementById('submit-text');
+            const submitSpinner = document.getElementById('submit-spinner');
+            
+            const title = document.getElementById('blog-title').value.trim();
+            const shortDesc = document.getElementById('blog-short-desc').value.trim();
+            const fullDesc = document.getElementById('blog-full-desc').value.trim();
+            
+            // Validate required fields
+            if (!title || !shortDesc || !fullDesc) {
+                showToast('Please fill all required fields!', 'error');
+                return;
+            }
+            
+            // Show loading state
+            submitText.textContent = 'Publishing...';
+            submitSpinner.style.display = 'inline-block';
+            submitBtn.disabled = true;
+            
+            try {
+                let imageUrl = '';
+                
+                // Upload image if selected
+                if (selectedImageFile) {
+                    const fileRef = storageRef(storage, `blog_images/${Date.now()}_${selectedImageFile.name}`);
+                    await uploadBytes(fileRef, selectedImageFile);
+                    imageUrl = await getDownloadURL(fileRef);
+                }
+                
+                // Prepare buttons data
+                const buttons = [];
+                
+                // Get all button inputs
+                for (let i = 1; i < buttonCount; i++) {
+                    const labelInput = document.getElementById(`button${i}-label`);
+                    const linkInput = document.getElementById(`button${i}-link`);
+                    
+                    // Skip if elements don't exist (might have been removed)
+                    if (!labelInput || !linkInput) continue;
+                    
+                    const label = labelInput.value.trim();
+                    const link = linkInput.value.trim();
+                    
+                    if (label && link) {
+                        if (!isValidUrl(link)) {
+                            showToast(`Please enter a valid URL for Button ${i}!`, 'error');
+                            return;
+                        }
+                        buttons.push({ label, link });
+                    } else if (label || link) {
+                        // Only one field filled
+                        showToast(`Please fill both label and link for Button ${i}`, 'error');
+                        return;
+                    }
+                }
+                
+                // Create blog object
+                const newBlog = {
+                    title,
+                    shortDesc,
+                    fullDesc,
+                    author: currentUser.displayName || 'Admin',
+                    createdAt: Date.now()
+                };
+                
+                if (imageUrl) newBlog.imageUrl = imageUrl;
+                if (buttons.length > 0) newBlog.buttons = buttons;
+                
+                // Push to Firebase
+                await push(blogsRef, newBlog);
+                
+                showToast('Blog published successfully!', 'success');
+                submitText.textContent = 'Published!';
+                
+                setTimeout(() => {
+                    hideAdminPanel();
+                    submitText.textContent = 'Publish Blog';
+                    submitSpinner.style.display = 'none';
+                    submitBtn.disabled = false;
+                }, 1000);
+            } catch (error) {
+                showToast('Error publishing blog: ' + error.message, 'error');
+                submitText.textContent = 'Try Again';
+                submitSpinner.style.display = 'none';
+                submitBtn.disabled = false;
+            }
+        }
+
+        // Validate URL
+        function isValidUrl(string) {
+            try {
+                new URL(string);
+                return true;
+            } catch (_) {
+                return false;
+            }
+        }
+
+        // Handle Authentication State
+        function handleAuthState(user) {
+            if (user) {
+                // User is signed in
+                currentUser = user;
+                loginScreen.style.display = 'none';
+                appContainer.style.display = 'flex';
+                
+                // Update user info in settings
+                userAvatar.src = user.photoURL || 'https://via.placeholder.com/150?text=User';
+                userName.textContent = user.displayName || 'Guest User';
+                userEmail.textContent = user.email || 'guest@example.com';
+                
+                // Check if user is admin (simple check for demo)
+                if (user.email && user.email.endsWith('@gmail.com')) {
+                    adminMenuItem.style.display = 'flex';
+                } else {
+                    adminMenuItem.style.display = 'none';
+                }
+                
+                // Fetch blogs
+                fetchBlogs();
+            } else {
+                // User is signed out
+                currentUser = null;
+                loginScreen.style.display = 'flex';
+                appContainer.style.display = 'none';
+            }
+        }
+
+        // Sign in with Google
+        async function signInWithGoogle() {
+            try {
+                const result = await signInWithPopup(auth, provider);
+                handleAuthState(result.user);
+            } catch (error) {
+                showToast('Error signing in: ' + error.message, 'error');
+            }
+        }
+
+        // Sign out
+        async function signOutUser() {
+            try {
+                await signOut(auth);
+                handleAuthState(null);
+                closeAllModals();
+                showToast('Signed out successfully', 'success');
+            } catch (error) {
+                showToast('Error signing out: ' + error.message, 'error');
+            }
+        }
+
+        // Event Listeners
+        loginButton.addEventListener('click', signInWithGoogle);
+        logoutButton.addEventListener('click', signOutUser);
+        settingsButton.addEventListener('click', toggleSettingsMenu);
+        adminMenuItem.addEventListener('click', (e) => {
+            e.preventDefault();
+            showAdminPanel();
+            settingsMenu.classList.remove('active');
+        });
+        searchButton.addEventListener('click', toggleSearch);
+        modalClose.addEventListener('click', closeBlogModal);
+        overlay.addEventListener('click', closeAllModals);
+        
+        searchBar.addEventListener('input', (e) => {
+            renderBlogs(e.target.value);
+        });
+
+        // Close modals on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeAllModals();
+            }
+        });
+
+        // Initialize auth state listener
+        onAuthStateChanged(auth, handleAuthState);
     </script>
 </body>
 </html>
