@@ -5,8 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Hazikk01 – Official Page</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Firebase CDN -->
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-analytics.js"></script>
     <style>
         :root {
             --primary: #ff3a3a;
@@ -38,196 +41,11 @@
             -webkit-overflow-scrolling: touch;
         }
 
-        .container {
-            max-width: 100%;
-            margin: 0 auto;
-            padding: 1rem;
-            min-height: 100vh;
-        }
+        /* [Previous CSS styles remain the same] */
+        /* ... Include all your existing CSS styles here ... */
 
-        /* Header Styles */
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0.5rem 1rem;
-            margin-bottom: 1rem;
-            animation: fadeIn 0.8s ease-out;
-            position: sticky;
-            top: 0;
-            background: rgba(18, 18, 18, 0.9);
-            backdrop-filter: blur(10px);
-            z-index: 50;
-        }
-
-        .logo {
-            height: 40px;
-            width: 40px;
-            border-radius: 50%;
-            object-fit: cover;
-            transition: transform 0.3s ease;
-        }
-
-        .logo:hover {
-            transform: scale(1.05);
-        }
-
-        .app-title {
-            font-size: 1.4rem;
-            font-weight: 600;
-            background: linear-gradient(to right, var(--white), var(--gray));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 10px rgba(255, 58, 58, 0.3);
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            max-width: 60vw;
-        }
-
-        .settings-icon {
-            font-size: 1.3rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            min-width: 24px;
-            text-align: center;
-        }
-
-        .settings-icon:hover {
-            color: var(--primary);
-            transform: rotate(30deg);
-        }
-
-        /* Search Bar */
-        .search-container {
-            margin: 1rem 0;
-            animation: slideUp 0.5s ease-out;
-            padding: 0 0.5rem;
-        }
-
-        .search-bar {
-            width: 100%;
-            padding: 0.8rem 1.2rem;
-            border-radius: 1.5rem;
-            border: none;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            color: var(--white);
-            font-size: 0.95rem;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-        }
-
-        .search-bar:focus {
-            outline: none;
-            box-shadow: 0 0 0 2px var(--primary), 0 4px 15px rgba(0, 0, 0, 0.3);
-            background: rgba(255, 255, 255, 0.15);
-        }
-
-        .search-bar::placeholder {
-            color: rgba(255, 255, 255, 0.7);
-        }
-
-        /* Section Titles */
-        .section-title {
-            font-size: 1.3rem;
-            margin: 1.5rem 0.5rem 0.8rem;
-            position: relative;
-            display: inline-block;
-            animation: fadeIn 0.8s ease-out;
-        }
-
-        .section-title::after {
-            content: '';
-            position: absolute;
-            bottom: -6px;
-            left: 0;
-            width: 50%;
-            height: 3px;
-            background: var(--primary);
-            border-radius: 3px;
-        }
-
-        /* Blog Cards */
-        .new-blogs {
-            overflow-x: auto;
-            padding: 0.5rem 0;
-            margin-bottom: 1rem;
-            animation: slideUp 0.6s ease-out;
-            -webkit-overflow-scrolling: touch;
-            scrollbar-width: none;
-        }
-
-        .new-blogs::-webkit-scrollbar {
-            display: none;
-        }
-
-        .new-blogs-container {
-            display: flex;
-            gap: 1rem;
-            padding: 0 0.5rem 0.5rem;
-            width: max-content;
-        }
-
-        .blog-card {
-            min-width: 260px;
-            width: 260px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 1.5rem;
-            overflow: hidden;
-            transition: all 0.3s ease;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-            backdrop-filter: blur(10px);
-            flex-shrink: 0;
-        }
-
-        .blog-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
-        }
-
-        .blog-card-image {
-            width: 100%;
-            height: 140px;
-            object-fit: cover;
-        }
-
-        .blog-card-content {
-            padding: 1rem;
-        }
-
-        .blog-card-title {
-            font-size: 1rem;
-            margin-bottom: 0.4rem;
-            font-weight: 600;
-            display: -webkit-box;
-            -webkit-line-clamp: 1;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
-
-        .blog-card-desc {
-            font-size: 0.85rem;
-            color: var(--gray);
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
-
-        /* All Blogs List */
-        .all-blogs {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 1rem;
-            margin-bottom: 3rem;
-            animation: fadeIn 1s ease-out;
-            padding: 0 0.5rem;
-        }
-
-        /* Blog Modal */
-        .modal-overlay {
+        /* Login Modal Styles */
+        .login-overlay {
             position: fixed;
             top: 0;
             left: 0;
@@ -236,957 +54,193 @@
             background: rgba(0, 0, 0, 0.9);
             display: flex;
             justify-content: center;
-            align-items: flex-start;
-            z-index: 1000;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s ease;
+            align-items: center;
+            z-index: 2000;
             backdrop-filter: blur(10px);
-            padding: 1rem;
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
         }
 
-        .modal-overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .blog-modal {
+        .login-modal {
             background: rgba(30, 30, 30, 0.95);
             border-radius: 1.5rem;
-            width: 100%;
-            max-width: 500px;
-            margin: 2rem 0;
-            overflow-y: auto;
-            padding: 1.5rem;
-            position: relative;
-            transform: scale(0.9);
-            transition: all 0.3s ease;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            border: 1px solid rgba(255, 58, 58, 0.2);
-        }
-
-        .modal-overlay.active .blog-modal {
-            transform: scale(1);
-        }
-
-        .modal-close {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            font-size: 1.5rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            background: none;
-            border: none;
-            color: var(--white);
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            z-index: 10;
-        }
-
-        .modal-close:hover {
-            color: var(--primary);
-            transform: rotate(90deg);
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        .modal-image {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-            border-radius: 1rem;
-            margin-bottom: 1.2rem;
-        }
-
-        .modal-title {
-            font-size: 1.5rem;
-            margin-bottom: 1rem;
-            color: var(--white);
-        }
-
-        .modal-content {
-            font-size: 0.95rem;
-            line-height: 1.6;
-            color: var(--gray);
-            margin-bottom: 1.5rem;
-            white-space: pre-line;
-        }
-
-        .modal-buttons {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-            margin-top: 1.5rem;
-        }
-
-        .modal-button {
-            padding: 0.8rem 1.2rem;
-            border-radius: 2rem;
-            background: var(--primary);
-            color: var(--white);
-            border: none;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-block;
-            text-align: center;
-            box-shadow: 0 4px 15px rgba(255, 58, 58, 0.3);
-            font-size: 0.95rem;
-            width: 100%;
-        }
-
-        .modal-button:hover {
-            background: var(--primary-dark);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(255, 58, 58, 0.4);
-        }
-
-        /* Admin Button */
-        .admin-fab {
-            position: fixed;
-            bottom: 1.5rem;
-            right: 1.5rem;
-            width: 56px;
-            height: 56px;
-            border-radius: 50%;
-            background: var(--primary);
-            color: var(--white);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            box-shadow: 0 4px 20px rgba(255, 58, 58, 0.4);
-            transition: all 0.3s ease;
-            z-index: 100;
-            border: none;
-            font-size: 1.5rem;
-        }
-
-        .admin-fab:hover {
-            transform: scale(1.1) rotate(90deg);
-            box-shadow: 0 6px 25px rgba(255, 58, 58, 0.6);
-        }
-
-        /* Admin Panel */
-        .admin-panel {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.95);
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            z-index: 1000;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(10px);
-            padding: 1rem;
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
-        }
-
-        .admin-panel.active {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .admin-container {
-            background: rgba(30, 30, 30, 0.95);
-            border-radius: 1.5rem;
-            width: 100%;
-            max-width: 500px;
-            padding: 1.5rem;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            border: 1px solid rgba(255, 58, 58, 0.2);
-            transform: scale(0.9);
-            transition: all 0.3s ease;
-            margin: 2rem 0;
-        }
-
-        .admin-panel.active .admin-container {
-            transform: scale(1);
-        }
-
-        .admin-title {
-            font-size: 1.4rem;
-            margin-bottom: 1.2rem;
-            text-align: center;
-            color: var(--white);
-        }
-
-        .form-group {
-            margin-bottom: 1.2rem;
-        }
-
-        .form-label {
-            display: block;
-            margin-bottom: 0.5rem;
-            color: var(--gray);
-            font-size: 0.9rem;
-        }
-
-        .form-input {
-            width: 100%;
-            padding: 0.8rem 1rem;
-            border-radius: 1rem;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            background: rgba(255, 255, 255, 0.05);
-            color: var(--white);
-            font-size: 0.95rem;
-            transition: all 0.3s ease;
-        }
-
-        .form-input:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 2px rgba(255, 58, 58, 0.3);
-        }
-
-        .form-textarea {
-            min-height: 120px;
-            resize: vertical;
-        }
-
-        .button-group {
-            display: flex;
-            gap: 1rem;
-            margin-top: 1.5rem;
-        }
-
-        .button {
-            padding: 0.8rem 1.2rem;
-            border-radius: 2rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border: none;
-            flex: 1;
-            font-size: 0.95rem;
-        }
-
-        .button-primary {
-            background: var(--primary);
-            color: var(--white);
-        }
-
-        .button-primary:hover {
-            background: var(--primary-dark);
-            transform: translateY(-2px);
-        }
-
-        .button-secondary {
-            background: rgba(255, 255, 255, 0.1);
-            color: var(--white);
-        }
-
-        .button-secondary:hover {
-            background: rgba(255, 255, 255, 0.2);
-        }
-
-        /* Button Group in Admin */
-        .button-group-admin {
-            display: flex;
-            gap: 0.5rem;
-            margin-bottom: 1rem;
-            align-items: center;
-        }
-
-        .remove-button {
-            background: rgba(255, 58, 58, 0.2);
-            color: var(--primary);
-            border: none;
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .remove-button:hover {
-            background: rgba(255, 58, 58, 0.3);
-        }
-
-        .add-button {
-            background: rgba(255, 255, 255, 0.1);
-            color: var(--white);
-            border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 1rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.9rem;
-            width: 100%;
-            justify-content: center;
-            margin-bottom: 1rem;
-        }
-
-        .add-button:hover {
-            background: rgba(255, 255, 255, 0.2);
-        }
-
-        /* Passcode Modal */
-        .passcode-modal {
-            text-align: center;
-        }
-
-        .passcode-input {
-            letter-spacing: 0.5rem;
-            font-size: 1.2rem;
-            text-align: center;
-            padding: 0.8rem 0.5rem;
-        }
-
-        /* Toast Notification */
-        .toast {
-            position: fixed;
-            bottom: 1.5rem;
-            left: 1rem;
-            right: 1rem;
-            background: var(--primary);
-            color: var(--white);
-            padding: 0.8rem 1.5rem;
-            border-radius: 1rem;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-            z-index: 1001;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s ease;
+            padding: 2rem;
             text-align: center;
             max-width: 400px;
-            margin: 0 auto;
+            width: 90%;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 58, 58, 0.2);
         }
 
-        .toast.show {
-            opacity: 1;
-            visibility: visible;
+        .login-title {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--white);
         }
 
-        .toast.error {
-            background: #d32f2f;
-        }
-
-        .toast.success {
-            background: #388e3c;
-        }
-
-        /* Loading Spinner */
-        .spinner {
-            display: inline-block;
-            width: 18px;
-            height: 18px;
-            border: 3px solid rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            border-top-color: var(--white);
-            animation: spin 1s ease-in-out infinite;
-            margin-right: 8px;
-            vertical-align: middle;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        @keyframes slideUp {
-            from { 
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to { 
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* Ripple Effect */
-        .ripple {
-            position: relative;
-            overflow: hidden;
-        }
-
-        .ripple-effect {
-            position: absolute;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.4);
-            transform: scale(0);
-            animation: ripple 0.6s linear;
-            pointer-events: none;
-        }
-
-        @keyframes ripple {
-            to {
-                transform: scale(4);
-                opacity: 0;
-            }
-        }
-
-        /* No Blogs Message */
-        .no-blogs {
-            text-align: center;
+        .login-text {
+            margin-bottom: 2rem;
             color: var(--gray);
-            padding: 2rem;
-            grid-column: 1 / -1;
         }
 
-        /* Hide scrollbar but allow scrolling */
-        .scrollable {
-            -webkit-overflow-scrolling: touch;
-            scrollbar-width: none;
+        .google-signin-btn {
+            background: #4285F4;
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.8rem;
+            font-weight: 500;
+            cursor: pointer;
+            margin: 0 auto;
+            transition: all 0.3s ease;
         }
-        
-        .scrollable::-webkit-scrollbar {
-            display: none;
+
+        .google-signin-btn:hover {
+            background: #3367D6;
+            transform: translateY(-2px);
+        }
+
+        .google-icon {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* User Profile Styles */
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .user-name {
+            font-size: 0.9rem;
+            font-weight: 500;
+            max-width: 120px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Header -->
-        <header>
-            <img src="https://i.postimg.cc/4dz51Kf7/451416876-1243992447013570-1116671324764678528-n.jpg" alt="Hazikk01 Logo" class="logo">
-            <h1 class="app-title">Hazikk01 – Official Page</h1>
-            <div class="settings-icon">⚙️</div>
-        </header>
+    <!-- [Previous HTML structure remains the same] -->
+    <!-- ... Include all your existing HTML here ... -->
 
-        <!-- Search Bar -->
-        <div class="search-container">
-            <input type="text" class="search-bar" placeholder="Search blogs..." id="search-bar">
-        </div>
-
-        <!-- New Blogs Section -->
-        <h2 class="section-title">New Blogs</h2>
-        <div class="new-blogs scrollable">
-            <div class="new-blogs-container" id="new-blogs-container">
-                <!-- New blogs will be loaded here -->
-                <div class="no-blogs">No blogs found</div>
-            </div>
-        </div>
-
-        <!-- All Blogs Section -->
-        <h2 class="section-title">All Blogs</h2>
-        <div class="all-blogs" id="all-blogs-container">
-            <!-- All blogs will be loaded here -->
-            <div class="no-blogs">Loading blogs...</div>
+    <!-- Add this new login modal -->
+    <div class="login-overlay" id="login-overlay">
+        <div class="login-modal">
+            <h2 class="login-title">Welcome to Hazikk01</h2>
+            <p class="login-text">Please sign in with Google to continue</p>
+            <button id="google-signin-btn" class="google-signin-btn ripple">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" class="google-icon">
+                Sign in with Google
+            </button>
         </div>
     </div>
-
-    <!-- Blog Modal -->
-    <div class="modal-overlay" id="blog-modal-overlay">
-        <div class="blog-modal scrollable">
-            <button class="modal-close ripple" id="modal-close">&times;</button>
-            <img src="" alt="Blog Cover" class="modal-image" id="modal-image">
-            <h2 class="modal-title" id="modal-title"></h2>
-            <p class="modal-content" id="modal-content"></p>
-            <div class="modal-buttons" id="modal-buttons">
-                <!-- Buttons will be added here -->
-            </div>
-        </div>
-    </div>
-
-    <!-- Admin FAB -->
-    <button class="admin-fab ripple" id="admin-fab">+</button>
-
-    <!-- Admin Panel -->
-    <div class="admin-panel" id="admin-panel">
-        <div class="admin-container scrollable" id="admin-container">
-            <!-- Content will be replaced based on state -->
-        </div>
-    </div>
-
-    <!-- Toast Notification -->
-    <div class="toast" id="toast"></div>
 
     <script>
-        // Firebase Configuration
+        // Firebase CDN Configuration
         const firebaseConfig = {
-            apiKey: "AIzaSyDCv...F7A",
-            authDomain: "hazik-yt.firebaseapp.com",
-            projectId: "hazik-yt",
-            storageBucket: "hazik-yt.appspot.com",
-            messagingSenderId: "370942998615",
-            appId: "1:370942998615:web:2a15096ff118d55b6c13ab"
+            apiKey: "AIzaSyCPldatrAsaCZksDPLiDzpTec-2plf5Zrw",
+            authDomain: "hazik-01.firebaseapp.com",
+            databaseURL: "https://hazik-01-default-rtdb.firebaseio.com",
+            projectId: "hazik-01",
+            storageBucket: "hazik-01.firebasestorage.app",
+            messagingSenderId: "804965117735",
+            appId: "1:804965117735:web:9f8b8ca8ff410a10fb0302",
+            measurementId: "G-915DG4PWMZ"
         };
 
         // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
         const database = firebase.database();
         const blogsRef = database.ref('blogs');
+        const analytics = firebase.analytics();
 
         // DOM Elements
-        const searchBar = document.getElementById('search-bar');
-        const newBlogsContainer = document.getElementById('new-blogs-container');
-        const allBlogsContainer = document.getElementById('all-blogs-container');
-        const blogModalOverlay = document.getElementById('blog-modal-overlay');
-        const modalClose = document.getElementById('modal-close');
-        const modalImage = document.getElementById('modal-image');
-        const modalTitle = document.getElementById('modal-title');
-        const modalContent = document.getElementById('modal-content');
-        const modalButtons = document.getElementById('modal-buttons');
-        const adminFab = document.getElementById('admin-fab');
-        const adminPanel = document.getElementById('admin-panel');
-        const adminContainer = document.getElementById('admin-container');
-        const toast = document.getElementById('toast');
+        const loginOverlay = document.getElementById('login-overlay');
+        const googleSignInBtn = document.getElementById('google-signin-btn');
+        const settingsIcon = document.querySelector('.settings-icon');
 
-        // State
-        let blogs = [];
-        let isAdminAuthenticated = false;
-        let buttonCount = 1; // Start with 1 button
-
-        // Ripple Effect
-        document.addEventListener('click', function(e) {
-            if (e.target.classList.contains('ripple')) {
-                const ripple = document.createElement('span');
-                ripple.classList.add('ripple-effect');
-                
-                const rect = e.target.getBoundingClientRect();
-                const size = Math.max(rect.width, rect.height);
-                const x = e.clientX - rect.left - size / 2;
-                const y = e.clientY - rect.top - size / 2;
-                
-                ripple.style.width = ripple.style.height = `${size}px`;
-                ripple.style.left = `${x}px`;
-                ripple.style.top = `${y}px`;
-                
-                e.target.appendChild(ripple);
-                
-                setTimeout(() => {
-                    ripple.remove();
-                }, 600);
+        // Check if user is logged in
+        function checkAuthState() {
+            const userData = localStorage.getItem('hazikk01_user');
+            if (userData) {
+                // User is logged in, hide login modal
+                loginOverlay.style.display = 'none';
+                updateUserUI(JSON.parse(userData));
+                return true;
             }
-        });
-
-        // Fetch Blogs from Firebase
-        function fetchBlogs() {
-            blogsRef.on('value', (snapshot) => {
-                blogs = [];
-                snapshot.forEach((childSnapshot) => {
-                    blogs.push({
-                        id: childSnapshot.key,
-                        ...childSnapshot.val()
-                    });
-                });
-                
-                // Sort by createdAt (newest first)
-                blogs.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
-                renderBlogs();
-            }, (error) => {
-                showToast('Error loading blogs: ' + error.message, 'error');
-            });
+            return false;
         }
 
-        // Render Blogs
-        function renderBlogs(filter = '') {
-            newBlogsContainer.innerHTML = '';
-            allBlogsContainer.innerHTML = '';
-            
-            let filteredBlogs = blogs;
-            if (filter) {
-                const lowerFilter = filter.toLowerCase();
-                filteredBlogs = blogs.filter(blog => 
-                    (blog.title && blog.title.toLowerCase().includes(lowerFilter)) || 
-                    (blog.shortDesc && blog.shortDesc.toLowerCase().includes(lowerFilter)) ||
-                    (blog.fullDesc && blog.fullDesc.toLowerCase().includes(lowerFilter))
-                );
-            }
-            
-            // Show message if no blogs
-            if (filteredBlogs.length === 0) {
-                const noBlogsMsg = document.createElement('div');
-                noBlogsMsg.className = 'no-blogs';
-                noBlogsMsg.textContent = filter ? 'No matching blogs found' : 'No blogs available';
-                newBlogsContainer.appendChild(noBlogsMsg.cloneNode(true));
-                allBlogsContainer.appendChild(noBlogsMsg);
-                return;
-            }
-            
-            // New Blogs (horizontal scroll - show first 5)
-            const newBlogs = filteredBlogs.slice(0, 5);
-            newBlogs.forEach(blog => {
-                const blogCard = createBlogCard(blog);
-                newBlogsContainer.appendChild(blogCard);
-            });
-            
-            // All Blogs (vertical list)
-            filteredBlogs.forEach(blog => {
-                const blogCard = createBlogCard(blog, true);
-                allBlogsContainer.appendChild(blogCard);
-            });
-        }
-
-        // Create Blog Card
-        function createBlogCard(blog, isVertical = false) {
-            const blogCard = document.createElement('div');
-            blogCard.className = 'blog-card';
-            blogCard.dataset.id = blog.id;
-            
-            blogCard.innerHTML = `
-                <img src="${blog.imageUrl || 'https://via.placeholder.com/300x150?text=No+Image'}" alt="${blog.title || 'Untitled Blog'}" class="blog-card-image">
-                <div class="blog-card-content">
-                    <h3 class="blog-card-title">${blog.title || 'Untitled Blog'}</h3>
-                    <p class="blog-card-desc">${blog.shortDesc || 'No description available'}</p>
+        // Update UI with user info
+        function updateUserUI(user) {
+            settingsIcon.innerHTML = `
+                <div class="user-profile">
+                    <img src="${user.photoURL || 'https://i.postimg.cc/4dz51Kf7/451416876-1243992447013570-1116671324764678528-n.jpg'}" 
+                         alt="${user.displayName}" 
+                         class="user-avatar">
+                    <span class="user-name">${user.displayName || 'User'}</span>
                 </div>
             `;
-            
-            blogCard.addEventListener('click', () => openBlogModal(blog));
-            
-            return blogCard;
         }
 
-        // Open Blog Modal
-        function openBlogModal(blog) {
-            modalImage.src = blog.imageUrl || 'https://via.placeholder.com/800x400?text=No+Image';
-            modalImage.alt = blog.title || 'Untitled Blog';
-            modalTitle.textContent = blog.title || 'Untitled Blog';
-            modalContent.textContent = blog.fullDesc || 'No content available';
-            
-            // Clear previous buttons
-            modalButtons.innerHTML = '';
-            
-            // Add buttons if they exist
-            if (blog.buttons && blog.buttons.length > 0) {
-                blog.buttons.forEach(button => {
-                    if (button.label && button.link) {
-                        const btn = document.createElement('a');
-                        btn.href = button.link;
-                        btn.target = '_blank';
-                        btn.rel = 'noopener noreferrer';
-                        btn.className = 'modal-button ripple';
-                        btn.textContent = button.label;
-                        modalButtons.appendChild(btn);
-                    }
-                });
-            }
-            
-            blogModalOverlay.classList.add('active');
-        }
-
-        // Close Blog Modal
-        function closeBlogModal() {
-            blogModalOverlay.classList.remove('active');
-        }
-
-        // Show Admin Panel
-        function showAdminPanel() {
-            if (isAdminAuthenticated) {
-                showBlogCreatorForm();
-            } else {
-                showPasscodeForm();
-            }
-            adminPanel.classList.add('active');
-        }
-
-        // Hide Admin Panel
-        function hideAdminPanel() {
-            adminPanel.classList.remove('active');
-            buttonCount = 1; // Reset button count when panel closes
-        }
-
-        // Show Passcode Form
-        function showPasscodeForm() {
-            adminContainer.innerHTML = `
-                <div class="passcode-modal">
-                    <h2 class="admin-title">Admin Access</h2>
-                    <div class="form-group">
-                        <label for="passcode" class="form-label">Enter Passcode</label>
-                        <input type="password" id="passcode" class="form-input passcode-input" placeholder="••••••••" autocomplete="off">
-                    </div>
-                    <div class="button-group">
-                        <button class="button button-secondary ripple" id="cancel-admin">Cancel</button>
-                        <button class="button button-primary ripple" id="submit-passcode">Submit</button>
-                    </div>
-                </div>
-            `;
-            
-            document.getElementById('cancel-admin').addEventListener('click', hideAdminPanel);
-            document.getElementById('submit-passcode').addEventListener('click', verifyPasscode);
-            
-            // Focus passcode input
-            setTimeout(() => {
-                const passcodeInput = document.getElementById('passcode');
-                if (passcodeInput) passcodeInput.focus();
-            }, 100);
-        }
-
-        // Verify Passcode
-        function verifyPasscode() {
-            const passcode = document.getElementById('passcode').value;
-            if (passcode === 'mirhazikr') {
-                isAdminAuthenticated = true;
-                showBlogCreatorForm();
-                showToast('Access granted!', 'success');
-            } else {
-                showToast('Incorrect passcode!', 'error');
-                document.getElementById('passcode').value = '';
-            }
-        }
-
-        // Show Blog Creator Form
-        function showBlogCreatorForm() {
-            adminContainer.innerHTML = `
-                <div class="blog-creator-form">
-                    <h2 class="admin-title">Create New Blog</h2>
-                    <div class="form-group">
-                        <label for="blog-image" class="form-label">Cover Image URL</label>
-                        <input type="text" id="blog-image" class="form-input" placeholder="https://example.com/image.jpg">
-                    </div>
-                    <div class="form-group">
-                        <label for="blog-title" class="form-label">Blog Title</label>
-                        <input type="text" id="blog-title" class="form-input" placeholder="Enter blog title">
-                    </div>
-                    <div class="form-group">
-                        <label for="blog-short-desc" class="form-label">Short Description (max 100 chars)</label>
-                        <input type="text" id="blog-short-desc" class="form-input" placeholder="Enter short description" maxlength="100">
-                    </div>
-                    <div class="form-group">
-                        <label for="blog-full-desc" class="form-label">Full Description</label>
-                        <textarea id="blog-full-desc" class="form-input form-textarea" placeholder="Enter full blog content"></textarea>
-                    </div>
+        // Google Sign-In
+        function signInWithGoogle() {
+            const provider = new firebase.auth.GoogleAuthProvider();
+            auth.signInWithPopup(provider)
+                .then((result) => {
+                    // Store user data in local storage
+                    const user = {
+                        uid: result.user.uid,
+                        displayName: result.user.displayName,
+                        email: result.user.email,
+                        photoURL: result.user.photoURL
+                    };
+                    localStorage.setItem('hazikk01_user', JSON.stringify(user));
                     
-                    <h3 style="margin: 1.5rem 0 1rem; color: var(--gray); font-size: 1rem;">Buttons</h3>
+                    // Hide login modal
+                    loginOverlay.style.display = 'none';
                     
-                    <div id="buttons-container">
-                        <!-- Buttons will be added here -->
-                    </div>
+                    // Update UI
+                    updateUserUI(user);
                     
-                    <button class="add-button ripple" id="add-button">
-                        <span>+</span> Add Another Button
-                    </button>
-                    
-                    <div class="button-group">
-                        <button class="button button-secondary ripple" id="cancel-blog">Cancel</button>
-                        <button class="button button-primary ripple" id="submit-blog">
-                            <span id="submit-text">Publish Blog</span>
-                            <span id="submit-spinner" class="spinner" style="display: none;"></span>
-                        </button>
-                    </div>
-                </div>
-            `;
-            
-            // Add default button
-            addButtonField();
-            
-            document.getElementById('cancel-blog').addEventListener('click', hideAdminPanel);
-            document.getElementById('submit-blog').addEventListener('click', submitBlog);
-            document.getElementById('add-button').addEventListener('click', addButtonField);
-            
-            // Focus first input
-            setTimeout(() => {
-                const firstInput = document.getElementById('blog-image');
-                if (firstInput) firstInput.focus();
-            }, 100);
-        }
-
-        // Add Button Field
-        function addButtonField() {
-            if (buttonCount >= 5) {
-                showToast('Maximum 5 buttons allowed', 'error');
-                return;
-            }
-            
-            const buttonsContainer = document.getElementById('buttons-container');
-            const buttonId = buttonCount++;
-            
-            const buttonDiv = document.createElement('div');
-            buttonDiv.className = 'button-group-admin';
-            buttonDiv.innerHTML = `
-                <div style="flex: 1;">
-                    <div class="form-group">
-                        <label for="button${buttonId}-label" class="form-label">Button ${buttonId} Label</label>
-                        <input type="text" id="button${buttonId}-label" class="form-input" placeholder="e.g. Watch Video">
-                    </div>
-                    <div class="form-group">
-                        <label for="button${buttonId}-link" class="form-label">Button ${buttonId} Link</label>
-                        <input type="url" id="button${buttonId}-link" class="form-input" placeholder="https://example.com">
-                    </div>
-                </div>
-                ${buttonId > 1 ? `<button class="remove-button ripple" data-id="${buttonId}">×</button>` : ''}
-            `;
-            
-            buttonsContainer.appendChild(buttonDiv);
-            
-            // Add event listener for remove button if it exists
-            if (buttonId > 1) {
-                buttonDiv.querySelector('.remove-button').addEventListener('click', function() {
-                    buttonsContainer.removeChild(buttonDiv);
-                    buttonCount--;
-                });
-            }
-        }
-
-        // Submit Blog to Firebase
-        function submitBlog() {
-            const submitBtn = document.getElementById('submit-blog');
-            const submitText = document.getElementById('submit-text');
-            const submitSpinner = document.getElementById('submit-spinner');
-            
-            const imageUrl = document.getElementById('blog-image').value.trim();
-            const title = document.getElementById('blog-title').value.trim();
-            const shortDesc = document.getElementById('blog-short-desc').value.trim();
-            const fullDesc = document.getElementById('blog-full-desc').value.trim();
-            
-            // Validate required fields
-            if (!imageUrl || !title || !shortDesc || !fullDesc) {
-                showToast('Please fill all required fields!', 'error');
-                return;
-            }
-            
-            // Validate image URL
-            if (!isValidUrl(imageUrl)) {
-                showToast('Please enter a valid image URL!', 'error');
-                return;
-            }
-            
-            // Prepare buttons data
-            const buttons = [];
-            
-            // Get all button inputs
-            for (let i = 1; i < buttonCount; i++) {
-                const labelInput = document.getElementById(`button${i}-label`);
-                const linkInput = document.getElementById(`button${i}-link`);
-                
-                // Skip if elements don't exist (might have been removed)
-                if (!labelInput || !linkInput) continue;
-                
-                const label = labelInput.value.trim();
-                const link = linkInput.value.trim();
-                
-                if (label && link) {
-                    if (!isValidUrl(link)) {
-                        showToast(`Please enter a valid URL for Button ${i}!`, 'error');
-                        return;
-                    }
-                    buttons.push({ label, link });
-                } else if (label || link) {
-                    // Only one field filled
-                    showToast(`Please fill both label and link for Button ${i}`, 'error');
-                    return;
-                }
-            }
-            
-            // Show loading state
-            submitText.textContent = 'Publishing...';
-            submitSpinner.style.display = 'inline-block';
-            submitBtn.disabled = true;
-            
-            // Create blog object
-            const newBlog = {
-                imageUrl,
-                title,
-                shortDesc,
-                fullDesc,
-                createdAt: firebase.database.ServerValue.TIMESTAMP
-            };
-            
-            if (buttons.length > 0) {
-                newBlog.buttons = buttons;
-            }
-            
-            // Push to Firebase
-            blogsRef.push(newBlog)
-                .then(() => {
-                    showToast('Blog published successfully!', 'success');
-                    submitText.textContent = 'Published!';
-                    setTimeout(() => {
-                        hideAdminPanel();
-                        submitText.textContent = 'Publish Blog';
-                        submitSpinner.style.display = 'none';
-                        submitBtn.disabled = false;
-                        
-                        // Clear form
-                        document.getElementById('blog-image').value = '';
-                        document.getElementById('blog-title').value = '';
-                        document.getElementById('blog-short-desc').value = '';
-                        document.getElementById('blog-full-desc').value = '';
-                        
-                        // Clear buttons
-                        const buttonsContainer = document.getElementById('buttons-container');
-                        buttonsContainer.innerHTML = '';
-                        buttonCount = 1;
-                        addButtonField(); // Add default button again
-                    }, 1000);
+                    // Log analytics event
+                    analytics.logEvent('login', { method: 'Google' });
                 })
                 .catch((error) => {
-                    showToast('Error publishing blog: ' + error.message, 'error');
-                    submitText.textContent = 'Try Again';
-                    submitSpinner.style.display = 'none';
-                    submitBtn.disabled = false;
+                    console.error('Google sign-in error:', error);
+                    showToast('Google sign-in failed. Please try again.', 'error');
                 });
         }
 
-        // Validate URL
-        function isValidUrl(string) {
-            try {
-                new URL(string);
-                return true;
-            } catch (_) {
-                return false;
+        // Check auth state on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            if (!checkAuthState()) {
+                // Show login modal if not logged in
+                loginOverlay.style.display = 'flex';
             }
-        }
-
-        // Show Toast Notification
-        function showToast(message, type = 'info') {
-            toast.textContent = message;
-            toast.className = `toast ${type}`;
-            toast.classList.add('show');
             
-            setTimeout(() => {
-                toast.classList.remove('show');
-            }, 3000);
-        }
-
-        // Event Listeners
-        modalClose.addEventListener('click', closeBlogModal);
-        blogModalOverlay.addEventListener('click', (e) => {
-            if (e.target === blogModalOverlay) {
-                closeBlogModal();
-            }
-        });
-        
-        adminFab.addEventListener('click', showAdminPanel);
-        adminPanel.addEventListener('click', (e) => {
-            if (e.target === adminPanel) {
-                hideAdminPanel();
-            }
-        });
-        
-        searchBar.addEventListener('input', (e) => {
-            renderBlogs(e.target.value);
+            // Initialize the rest of your app
+            fetchBlogs();
         });
 
-        // Close modals on Escape key
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                if (blogModalOverlay.classList.contains('active')) {
-                    closeBlogModal();
-                }
-                if (adminPanel.classList.contains('active')) {
-                    hideAdminPanel();
-                }
-            }
-        });
+        // Google Sign-In button event
+        googleSignInBtn.addEventListener('click', signInWithGoogle);
 
-        // Initialize
-        fetchBlogs();
+        // [Rest of your existing JavaScript code]
+        // ... Include all your existing JavaScript functions here ...
     </script>
 </body>
 </html>
